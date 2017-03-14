@@ -1,8 +1,16 @@
 # LfoApi
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lfo_api`. To experiment with that code, run `bin/console` for an interactive prompt.
+LfoApi is a Ruby gem that wraps the hypothetical API for Leapfrog Online. While it is not published, this is my solution to the given challenge. The gem is meant to run locally.
 
-TODO: Delete this and the text above, and describe your gem
+Because it is hypothetical, there were additional support files added to make tests work. They are meant to be reviewed.
+
+## Local Development
+
+Clone the repo, and run `bin/setup` to install dependencies. To run tests, run `rake spec`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+Dependencies installed include: bundler, rake, rspec, webmock, sinatra, faraday and json.
 
 ## Installation
 
@@ -16,24 +24,19 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install lfo_api
 
 ## Usage
 
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lfo_api. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+```ruby
+# Create client for API requests
+@customer = LfoApi::Customer.new
+# Get scoring advice for specific customer
+@customer.get_scoring_advice('http://not_real.com/customer_scoring?income=50000&zipcode=60201&age=35') # => or the working url
+# Get customer's propensity
+@customer.propensity # => 0.26532
+# Get customer's ranking
+@customer.ranking # => "C"
+```
 
 ## License
 

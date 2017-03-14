@@ -1,15 +1,29 @@
 require "lfo_api/version"
 require "faraday"
 
-API_URL = "http://not-real.com/customer_scoring"
 
 module LfoApi
 
   class Customer
+    attr_accessor :propensity, :ranking
 
-    def self.get_score(income, zipcode, age)
-      response = Faraday.get("#{API_URL}?income=#{income}&zipcode=#{zipcode}&age=#{age}")
-      attributes = JSON.parse(response.body)
+    def valid_url?(url)
+      data_hash = CGI.parse(URI.parse(url).query)
+      if data_hash.keys.sort == ["age", "income", "zipcode"]
+        true
+      else
+        false
+      end      
+    end
+
+    def get_scoring_advice(url)
+      if valid_url?(url)
+        response = Faraday.get(url)
+        response_hash = JSON.parse(response.body)
+        @propensity = response_hash["propensity"]
+        @ranking = response_hash["ranking"]
+        return response_hash
+      end
     end
   end
 

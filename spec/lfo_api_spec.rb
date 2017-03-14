@@ -7,32 +7,68 @@ describe LfoApi do
 end
 
 describe LfoApi::Customer do
-  # let(:customer) { LfoApi::Customer.new(50000, 60201, 35) }
 
-  # describe "#initialize" do
-  #   it "assigns @income" do
-  #     expect(customer.income).to eq 50000
-  #   end
+  before do
+    @customer = LfoApi::Customer.new
+    @good_url = 'http://not-real.com/customer_scoring?income=35000&zipcode=60601&age=40'
+    @scoring_advice = @customer.get_scoring_advice(@good_url)
+  end
 
-  #   it "assigns @zipcode" do
-  #     expect(customer.zipcode).to eq 60201
-  #   end
-
-  #   it "assigns @age" do
-  #     expect(customer.age).to eq 35
-  #   end
-  # end
-
-  describe "#get_score" do
-    let(:score) { LfoApi::Customer.get_score(50000, 60201, 35) }
-
-    it 'makes call to fake website, uses static json file' do
-      expect(score.keys).to contain_exactly('propensity', 'ranking')
+  describe "#valid_url?" do
+    it "returns true only if income, zipcode and age parameters are included" do
+      expect(@customer.valid_url?(@good_url)).to eq true
     end
 
-    it "returns score data" do
-      expect(score["propensity"]).to eq 0.26532
-      expect(score["ranking"]).to eq "C"
+    it "returns false if income parameter is missing" do
+      bad_url = 'http://not-real.com/customer_scoring?zipcode=60601&age=40'
+      expect(@customer.valid_url?(bad_url)).to eq false
+    end
+
+    it "returns false if zipcode parameter is missing" do
+      bad_url = 'http://not-real.com/customer_scoring?income=35000&age=40'
+      expect(@customer.valid_url?(bad_url)).to eq false
+    end
+
+    it "returns false if age parameter is missing" do
+      bad_url = 'http://not-real.com/customer_scoring?income=35000&zipcode=60601'
+      expect(@customer.valid_url?(bad_url)).to eq false
     end
   end
+
+  describe "#get_scoring_advice" do
+    context "Passing a Valid URL" do
+      it "calls fake website" do
+        expect(@scoring_advice.keys).to contain_exactly('propensity', 'ranking')
+      end
+
+      it "returns a hash" do
+        expect(@scoring_advice).to be_a_kind_of(Hash)
+      end
+
+      it "returns scoring advice, uses static json file" do
+        expect(@scoring_advice["propensity"]).to eq 0.26532
+        expect(@scoring_advice["ranking"]).to eq "C"
+      end
+    end
+
+    context "Passing an Invalid URL" do
+      it "returns nil" do
+        invalid_request = @customer.get_scoring_advice('http://not-real.com/customer_scoring?income=35000&zipcode=60601')
+        expect(invalid_request).to be_nil
+      end
+    end
+  end
+
+  describe "#propensity" do
+    it "returns propensity value, uses static json file" do
+      expect(@customer.propensity).to eq 0.26532
+    end
+  end
+
+  describe "#ranking" do
+    it "returns ranking value, uses static json file" do
+      expect(@customer.ranking).to eq "C"
+    end
+  end
+
 end
