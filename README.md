@@ -28,7 +28,7 @@ And then execute:
 ## Usage
 
 ```ruby
-# Create client for API requests
+# Create customer for API requests
 @customer = LfoApi::Customer.new
 # Get scoring advice for specific customer. Replace hypothetical URL with the working version.
 @customer.get_scoring_advice('http://not_real.com/customer_scoring?income=50000&zipcode=60201&age=35')
